@@ -5,9 +5,9 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 @Data
-@Node("Position")
-public class Position {
+@Node("Responsibility")
+public class Responsibility {
     @Id
     private Long Id;
-    private String title;
+    private String name;
 }

@@ -1,17 +1,19 @@
-// DATA
-MERGE (dpt1:Department {id:1, name: "HR", responsibilities: ["Contracting"]})
-MERGE (dpt2:Department {id:2, name: "Sales", responsibilities: ["Reporting"]})
-MERGE (dpt3:Department {id:3, name: "Finance", responsibilities: ["Licensing"]})
+MERGE (hr:Department {id:1, name: "HR"})
+MERGE (sales:Department {id:2, name: "Sales"})
+MERGE (finance:Department {id:3, name: "Finance"})
 
-MERGE (pos1:Position {id:1, name: "Head of Finance"})
+MERGE (contracting:Responsibility {id:1, name: "Contracting"})
+MERGE (licensing:Responsibility {id:2, name: "Licensing"})
+MERGE (reporting:Responsibility {id:3, name: "Reporting"})
+
+MERGE (hof:Position {id:1, title: "Head of Finance"})
 
 MERGE (usr1:User {id:1, name: "Schmidt", country: "USA", joining_date: date("2019-09-30")})
 MERGE (usr2:User {id:2, name: "Jenko", country: "USA", joining_date: date("2019-09-30")})
 MERGE (usr3:User {id:3, name: "Jeff", country: "Mexico", joining_date: date("2019-09-30")})
 
-MERGE (doc1:Document {id:1, title: "Doc A", type: "Report", creation_date: date("2019-09-30")})
-MERGE (doc2:Document {id:2, title: "Doc B", type: "Contract", creation_date: date("2019-09-30")})
-MERGE (doc3:Document {id:3, title: "Doc C", type: "License", creation_date: date("2019-09-30")})
+MERGE (doc1:Document {id:1, title: "A Report", type: "Report", creation_date: date("2019-09-30")})
+MERGE (doc2:Document {id:2, title: "A Contract", type: "Contract", creation_date: date("2019-09-30")})
+MERGE (doc3:Document {id:3, title: "A License", type: "License", creation_date: date("2019-09-30")})
 
-// RELATIONS
-
+MERGE ()
