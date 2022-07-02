@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Node("Position")
 public class Position {
     @Id
-    private Long Id;
-    private String title;
+    private Long id;
+
+    private String name;
 }

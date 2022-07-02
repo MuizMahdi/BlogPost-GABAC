@@ -1,9 +1,7 @@
 package muiz.demo.abac.data.entities;
 
 import lombok.Data;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Property;
+import org.springframework.data.neo4j.core.schema.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -12,10 +10,14 @@ import java.time.LocalDate;
 @Node("Document")
 public class Document {
     @Id
-    private Long Id;
+    private Long id;
+
     private String title;
-    private String type;
+
     @Property("creation_date")
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate creationDate;
+
+    @Relationship(type = "HAS_TYPE")
+    private DocumentType type;
 }
