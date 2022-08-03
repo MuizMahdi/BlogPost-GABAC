@@ -1,3 +1,33 @@
-{
-
-}
+[
+   {
+      "resource": {
+         "type": "Document",
+         "action": "GET",
+         "effect": "permit"
+      },
+      "rule": {
+         "User": {
+            "properties": {
+               "name": "$current_username",
+               "joining_date": ">2019"
+            },
+            "Department": {
+               "properties": {
+                  "relation": "member of"
+               },
+               "DocumentType": {
+                  "properties": {
+                     "relation": "publishes"
+                  },
+                  "Document": {
+                     "properties": {
+                        "relation": "has type",
+                        "id": "/id"
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+]

@@ -28,6 +28,6 @@ public class AuthorizationPolicies {
         Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String currentUsername = request.getUserPrincipal().getName();
         Long requestedDocumentId = Long.parseLong(pathVariables.get("id"));
-        return documentRepository.isWorking(requestedDocumentId, currentUsername);
+        return documentRepository.isPublishedByUserDepartment(requestedDocumentId, currentUsername);
     }
 }
