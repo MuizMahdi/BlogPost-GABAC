@@ -1,9 +1,7 @@
 package muiz.demo.abac.configuration;
 
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.TransactionWork;
 import org.neo4j.driver.exceptions.Neo4jException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,10 @@ public class DatabaseConfig {
         return (args) -> {
             String query = getCypherQuery();
             try (Session session = driver.session()) {
-                session.writeTransaction(loadData(query));
+                session.writeTransaction(tx -> tx.run(query));
+            } catch (Neo4jException ex) {
+                LOGGER.error(ex.getMessage());
+                throw ex;
             }
         };
     }
@@ -42,16 +43,5 @@ public class DatabaseConfig {
     private String getCypherQuery() throws IOException {
         File cypherFile = ResourceUtils.getFile("classpath:data/data.cypher");
         return new String(Files.readAllBytes(cypherFile.toPath()));
-    }
-
-    private TransactionWork<Result> loadData(String query) {
-        return tx -> {
-            try {
-                return tx.run(query);
-            } catch (Neo4jException ex) {
-                LOGGER.error(ex.getMessage());
-                throw ex;
-            }
-        };
     }
 }

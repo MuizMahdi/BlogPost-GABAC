@@ -4,7 +4,9 @@ import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.servlet.HandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +21,12 @@ public class PolicyQueryGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyQueryGenerator.class.getName());
 
+    private HttpServletRequest request;
+
+    public PolicyQueryGenerator(HttpServletRequest request) {
+        this.request = request;
+    }
+
     /**
      * Operators used for comparison that are used to build the conditions in the query
      */
@@ -27,7 +35,7 @@ public class PolicyQueryGenerator {
     /**
      * Indicates a variable that would be obtained from the request's path variables
      */
-    private static final String PATH_VARIABLE_OPERATOR = "/";
+    private static final Character PATH_VARIABLE_OPERATOR = '/';
 
     /**
      * Indicates a predefined variable that would be obtained from the user principal
@@ -54,28 +62,28 @@ public class PolicyQueryGenerator {
     }
 
     private String buildQuery(Set<Policy.PolicyRule> rules) {
-        Map<Character, String[]> comparisonProperties = new HashMap<>();
+        var comparisonProperties = new HashMap<Character, String[]>();
+        List<String> externalProperties = new ArrayList<>();
         StringBuilder query = new StringBuilder();
         query.append("MATCH ");
 
-        rules.forEach(rule -> buildNode(rule, comparisonProperties, query));
+        rules.forEach(rule -> buildNode(rule, comparisonProperties, externalProperties, query));
         buildConditions(comparisonProperties, query);
-        buildExternalVariables(query);
 
         query.append(String.format(" RETURN count(%s) > 0", rules.stream().toList().get(0).getType()));
 
-        return query.toString();
+        return buildExternalVariables(externalProperties, query.toString());
     }
 
-    private void buildNode(Policy.PolicyRule rule, Map<Character, String[]> comparisonProperties, StringBuilder query) {
+    private void buildNode(Policy.PolicyRule rule, Map<Character, String[]> comparisonProperties, List<String> externalProperties, StringBuilder query) {
         String node = rule.getType();
         String relation = rule.getProperties().get("relation");
-        Map<String, String> properties = rule.getProperties().entrySet().stream()
+        var properties = rule.getProperties().entrySet().stream()
         .filter(entry -> !entry.getKey().equals("relation"))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         StringBuilder nodeProperties = new StringBuilder();
-        buildProperties(node, properties, nodeProperties, comparisonProperties);
+        buildProperties(node, properties, nodeProperties, comparisonProperties, externalProperties);
 
         // Add relation
         if (relation != null && !relation.isEmpty()) {
@@ -88,18 +96,21 @@ public class PolicyQueryGenerator {
         query.append("(").append(node).append(nodeProperties).append(")");
     }
 
-    private void buildProperties(String node, Map<String, String> properties, StringBuilder nodeProperties, Map<Character, String[]> comparisonProperties) {
+    private void buildProperties(String node, Map<String, String> properties, StringBuilder nodeProperties, Map<Character, String[]> comparisonProperties, List<String> externalProperties) {
         if (properties.size() > 0) {
             nodeProperties.append("{");
             for (var property : properties.entrySet()) {
                 String value = property.getValue();
                 String key = property.getKey();
-                Character comparisonOperator = value.charAt(0);
-                if (COMPARISON_OPERATORS.contains(comparisonOperator)) {
-                    comparisonProperties.put(comparisonOperator, new String[]{node, key, value.substring(1)});
-                } else {
-                    nodeProperties.append(key).append(String.format(": '%s',", value));
+                Character operator = value.charAt(0);
+                if (COMPARISON_OPERATORS.contains(operator)) {
+                    comparisonProperties.put(operator, new String[]{node, key, value.substring(1)});
+                    continue;
+                } else if (PATH_VARIABLE_OPERATOR.equals(operator)) {
+                    value = value.substring(1);
+                    externalProperties.add(value);
                 }
+                nodeProperties.append(key).append(String.format(": '%s',", value));
             }
             nodeProperties.deleteCharAt(nodeProperties.length()-1);
             nodeProperties.append("}");
@@ -121,8 +132,17 @@ public class PolicyQueryGenerator {
         }
     }
 
-    private void buildExternalVariables(StringBuilder query) {
-
+    private String buildExternalVariables(List<String> externalProperties, String query) {
+        var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        for (String property : externalProperties) {
+            String pathVariable = pathVariables.get(property);
+            boolean isNumeric = pathVariable.matches("[+-]?\\d*(\\.\\d+)?");
+            if (isNumeric) {
+                query = query.replaceAll(String.format("'%s'", property), pathVariable);
+                continue;
+            }
+            query = query.replaceAll(property, pathVariable);
+        }
+        return query;
     }
-
 }

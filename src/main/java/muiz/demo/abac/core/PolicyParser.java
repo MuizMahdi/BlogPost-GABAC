@@ -23,8 +23,8 @@ public class PolicyParser {
         Gson gson = new Gson();
         List<Policy> policies = Arrays.asList(gson.fromJson(policiesJson, Policy[].class));
         policies.forEach(policy -> {
-            LinkedHashSet<Policy.PolicyRule> policyRules = new LinkedHashSet<>();
-            LinkedTreeMap<?, ?> parsedRules = policy.getRule();
+            var policyRules = new LinkedHashSet<Policy.PolicyRule>();
+            var parsedRules = policy.getRule();
             Policy.PolicyRule rule = new Policy.PolicyRule();
             constructRules(parsedRules, rule, policyRules);
             policy.setRules(policyRules);
@@ -33,10 +33,10 @@ public class PolicyParser {
     }
 
     private static void constructRules(LinkedTreeMap<?, ?> map, Policy.PolicyRule rule, LinkedHashSet<Policy.PolicyRule> policyRules) {
-        Optional<?> leftKey = map.keySet().stream().findFirst();
-        Optional<?> leftVal = map.values().stream().findFirst();
-        Optional<?> rightKey = map.keySet().stream().skip(1).findFirst();
-        Optional<?> rightVal = map.values().stream().skip(1).findFirst();
+        var leftKey = map.keySet().stream().findFirst();
+        var leftVal = map.values().stream().findFirst();
+        var rightKey = map.keySet().stream().skip(1).findFirst();
+        var rightVal = map.values().stream().skip(1).findFirst();
 
         constructNodeRules(Pair.of(leftKey, leftVal), rule, policyRules);
         constructNodeRules(Pair.of(rightKey, rightVal), rule, policyRules);
@@ -45,8 +45,8 @@ public class PolicyParser {
     }
 
     private static void constructNodeRules(Pair<Optional<?>, Optional<?>> node, Policy.PolicyRule rule, LinkedHashSet<Policy.PolicyRule> policyRules) {
-        Optional<?> key = node.getFirst();
-        Optional<?> value = node.getSecond();
+        var key = node.getFirst();
+        var value = node.getSecond();
         if (value.isPresent() && key.isPresent()) {
             if (key.get().equals("properties")) rule.setProperties((LinkedTreeMap) value.get());
             else {
