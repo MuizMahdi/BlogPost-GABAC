@@ -11,21 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Service("authorizationPolicies")
-public class AuthorizationPolicies {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationPolicies.class.getName());
+public class AuthorizationPoliciesService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationPoliciesService.class.getName());
 
     private final HttpServletRequest request;
 
     private final DocumentRepository documentRepository;
 
     @Autowired
-    public AuthorizationPolicies(HttpServletRequest request, DocumentRepository documentRepository) {
+    public AuthorizationPoliciesService(HttpServletRequest request, DocumentRepository documentRepository) {
         this.request = request;
         this.documentRepository = documentRepository;
     }
 
     public boolean isMemberOfAuthorizedDepartment() {
-        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String currentUsername = request.getUserPrincipal().getName();
         Long requestedDocumentId = Long.parseLong(pathVariables.get("id"));
         return documentRepository.isPublishedByUserDepartment(requestedDocumentId, currentUsername);

@@ -21,10 +21,10 @@ public class PolicyQueryGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyQueryGenerator.class.getName());
 
-    private HttpServletRequest request;
+    private Map<String, String> pathVariables;
 
-    public PolicyQueryGenerator(HttpServletRequest request) {
-        this.request = request;
+    public PolicyQueryGenerator(Map<String, String> pathVariables) {
+        this.pathVariables = pathVariables;
     }
 
     /**
@@ -133,7 +133,6 @@ public class PolicyQueryGenerator {
     }
 
     private String buildExternalVariables(List<String> externalProperties, String query) {
-        var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         for (String property : externalProperties) {
             String pathVariable = pathVariables.get(property);
             boolean isNumeric = pathVariable.matches("[+-]?\\d*(\\.\\d+)?");

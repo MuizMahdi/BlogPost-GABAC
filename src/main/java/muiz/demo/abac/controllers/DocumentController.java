@@ -1,7 +1,5 @@
 package muiz.demo.abac.controllers;
 
-import muiz.demo.abac.core.PolicyEvaluator;
-import muiz.demo.abac.core.PolicyParser;
 import muiz.demo.abac.data.entities.Document;
 import muiz.demo.abac.services.DocumentService;
 import org.slf4j.Logger;
@@ -22,19 +20,14 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
-    private final PolicyEvaluator policyEvaluator;
-
     @Autowired
-    public DocumentController(DocumentService documentService, PolicyEvaluator policyEvaluator) {
+    public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
-        this.policyEvaluator = policyEvaluator;
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@authorizationPolicies.isMemberOfAuthorizedDepartment()")
+//    @PreAuthorize("@authorizationPolicies.isMemberOfAuthorizedDepartment()")
     public Document getDocument(@PathVariable Long id) {
-        // TODO: Should be called in a generic manner (perhaps via a filter, or Spring AOP)
-        policyEvaluator.evaluate();
         Optional<Document> document = documentService.getDocumentById(id);
         if (document.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Document");
