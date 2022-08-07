@@ -18,7 +18,7 @@ public class AuthorizationPoliciesInterceptor implements HandlerInterceptor {
         this.evaluator = evaluator;
     }
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (!evaluator.isAllowed(request)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

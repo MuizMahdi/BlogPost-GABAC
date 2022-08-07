@@ -8,9 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,26 +33,29 @@ public class PolicyEvaluator {
     }
 
     public boolean isAllowed(HttpServletRequest request) {
-        var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        var queries = new HashMap<Policy.PolicyResource, String>();
+        var policies = new PolicyParser().getPolicies();
+        var generator = new PolicyQueryGenerator(request);
         String resource = request.getRequestURI().split("/")[1];
         String action = request.getMethod();
-        var policiesQueries = new PolicyQueryGenerator(pathVariables).getQueries();
-        var policyQuery = policiesQueries.keySet().stream().filter(policyResource ->
+
+        policies.forEach(policy -> queries.put(policy.getResource(), generator.buildQuery(policy.getRules())));
+
+        var currentRequestQuery = queries.keySet().stream().filter(policyResource ->
             resource.equals(policyResource.getType().toLowerCase()) && action.equals(policyResource.getAction())
         ).findFirst();
 
-        if (policyQuery.isPresent()) {
-            String query = policiesQueries.get(policyQuery.get());
+        if (currentRequestQuery.isPresent()) {
+            String query = queries.get(currentRequestQuery.get());
             LOGGER.info(query);
             try (Session session = driver.session()) {
                 Record record = session.readTransaction(tx -> tx.run(query).single());
                 var result = record.asMap().entrySet().stream().findFirst();
                 boolean hasMatch = result.isPresent() && (Boolean) result.get().getValue();
-                boolean isPermitted = policyQuery.get().isPermitted();
+                boolean isPermitted = currentRequestQuery.get().isPermitted();
                 return hasMatch == isPermitted;
             } catch (Neo4jException ex) {
                 LOGGER.error(ex.getMessage());
-                throw ex;
             }
         }
 
