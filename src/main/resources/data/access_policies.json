@@ -3,13 +3,13 @@
       "resource": {
          "type": "Document",
          "action": "GET",
-         "effect": "permit"
+         "permitted": true
       },
       "rule": {
          "User": {
             "properties": {
                "name": "$current_username",
-               "joining_date": ">2019"
+               "years_of_experience": ">5"
             },
             "Department": {
                "properties": {

@@ -1,6 +1,7 @@
 package muiz.demo.abac.core;
 
 import com.google.gson.internal.LinkedTreeMap;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;
@@ -13,10 +14,11 @@ public class Policy {
     private transient Set<PolicyRule> rules;
 
     @Data
+    @AllArgsConstructor
     public static class PolicyResource {
         private String type;
         private String action;
-        private String effect;
+        private boolean permitted;
     }
 
     @Data

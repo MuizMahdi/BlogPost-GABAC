@@ -23,10 +23,6 @@ public class PolicyQueryGenerator {
 
     private Map<String, String> pathVariables;
 
-    public PolicyQueryGenerator(Map<String, String> pathVariables) {
-        this.pathVariables = pathVariables;
-    }
-
     /**
      * Operators used for comparison that are used to build the conditions in the query
      */
@@ -38,9 +34,13 @@ public class PolicyQueryGenerator {
     private static final Character PATH_VARIABLE_OPERATOR = '/';
 
     /**
-     * Indicates a predefined variable that would be obtained from the user principal
+     * Indicates a predefined variable that would be obtained from the spring context, e.g. user principal
      */
-    private static final String PRINCIPAL_VARIABLE_OPERATOR = "$";
+    private static final String CONTEXT_VARIABLE_OPERATOR = "$";
+
+    public PolicyQueryGenerator(Map<String, String> pathVariables) {
+        this.pathVariables = pathVariables;
+    }
 
     public HashMap<Policy.PolicyResource, String> getQueries() {
         HashMap<Policy.PolicyResource, String> policiesQueries = new HashMap<>();
@@ -77,15 +77,16 @@ public class PolicyQueryGenerator {
 
     private void buildNode(Policy.PolicyRule rule, Map<Character, String[]> comparisonProperties, List<String> externalProperties, StringBuilder query) {
         String node = rule.getType();
-        String relation = rule.getProperties().get("relation");
-        var properties = rule.getProperties().entrySet().stream()
-        .filter(entry -> !entry.getKey().equals("relation"))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
+        var properties = rule.getProperties();
+        String relation = properties != null ? properties.remove("relation") : "";
         StringBuilder nodeProperties = new StringBuilder();
-        buildProperties(node, properties, nodeProperties, comparisonProperties, externalProperties);
 
-        // Add relation
+        // Construct node properties
+        if (properties != null) {
+            buildProperties(node, properties, nodeProperties, comparisonProperties, externalProperties);
+        }
+
+        // Construct node relation
         if (relation != null && !relation.isEmpty()) {
             query.append(String.format("-[:%s]-", relation.replace(" ", "_").toUpperCase()));
         } else if (query.length() > 6) {
@@ -143,5 +144,9 @@ public class PolicyQueryGenerator {
             query = query.replaceAll(property, pathVariable);
         }
         return query;
+    }
+
+    private StringBuilder buildPrincipalVariables(StringBuilder query) {
+        return null;
     }
 }
