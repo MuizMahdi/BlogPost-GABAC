@@ -1,7 +1,7 @@
-package muiz.demo.abac.services;
+package muiz.demo.gabac.services;
 
-import muiz.demo.abac.data.entities.Document;
-import muiz.demo.abac.data.repositories.DocumentRepository;
+import muiz.demo.gabac.data.entities.Document;
+import muiz.demo.gabac.data.repositories.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

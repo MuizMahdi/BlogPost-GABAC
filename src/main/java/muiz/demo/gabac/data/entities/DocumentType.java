@@ -1,4 +1,4 @@
-package muiz.demo.abac.data.entities;
+package muiz.demo.gabac.data.entities;
 
 import lombok.Data;
 import org.springframework.data.neo4j.core.schema.Id;

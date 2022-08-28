@@ -1,6 +1,6 @@
-package muiz.demo.abac.configuration;
+package muiz.demo.gabac.configuration;
 
-import muiz.demo.abac.security.AuthorizationPoliciesInterceptor;
+import muiz.demo.gabac.security.AuthorizationPoliciesInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

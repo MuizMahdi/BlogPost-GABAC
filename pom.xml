@@ -11,9 +11,9 @@
 	</parent>
 
 	<groupId>muiz.demo</groupId>
-	<artifactId>abac</artifactId>
+	<artifactId>gabac</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>abac</name>
+	<name>gabac</name>
 	<description>Demo project for demonstrating ABAC with Graph DBs</description>
 	<properties>
 		<java.version>17</java.version>

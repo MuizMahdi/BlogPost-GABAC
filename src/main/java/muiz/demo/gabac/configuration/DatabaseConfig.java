@@ -1,4 +1,4 @@
-package muiz.demo.abac.configuration;
+package muiz.demo.gabac.configuration;
 
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;

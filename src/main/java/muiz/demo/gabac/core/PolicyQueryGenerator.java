@@ -1,4 +1,4 @@
-package muiz.demo.abac.core;
+package muiz.demo.gabac.core;
 
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;

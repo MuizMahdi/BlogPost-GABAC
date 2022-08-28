@@ -1,4 +1,4 @@
-package muiz.demo.abac.core;
+package muiz.demo.gabac.core;
 
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;

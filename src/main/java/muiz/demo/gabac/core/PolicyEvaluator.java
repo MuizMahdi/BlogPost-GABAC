@@ -1,4 +1,4 @@
-package muiz.demo.abac.core;
+package muiz.demo.gabac.core;
 
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Record;

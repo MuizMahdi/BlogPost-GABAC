@@ -1,6 +1,6 @@
-package muiz.demo.abac.data.repositories;
+package muiz.demo.gabac.data.repositories;
 
-import muiz.demo.abac.data.entities.Document;
+import muiz.demo.gabac.data.entities.Document;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
-package muiz.demo.abac.security;
+package muiz.demo.gabac.security;
 
-import muiz.demo.abac.core.PolicyEvaluator;
+import muiz.demo.gabac.core.PolicyEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

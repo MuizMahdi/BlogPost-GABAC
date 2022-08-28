@@ -1,6 +1,6 @@
-package muiz.demo.abac.security;
+package muiz.demo.gabac.security;
 
-import muiz.demo.abac.data.repositories.DocumentRepository;
+import muiz.demo.gabac.data.repositories.DocumentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

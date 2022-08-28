@@ -1,7 +1,7 @@
-package muiz.demo.abac.controllers;
+package muiz.demo.gabac.controllers;
 
-import muiz.demo.abac.data.entities.Document;
-import muiz.demo.abac.services.DocumentService;
+import muiz.demo.gabac.data.entities.Document;
+import muiz.demo.gabac.services.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
