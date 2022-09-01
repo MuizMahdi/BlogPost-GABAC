@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 
 /**
@@ -45,6 +43,10 @@ public class PolicyQueryGenerator {
         this.request = request;
     }
 
+    /**
+     * Constructs a cypher query from a set of policy rules
+     * @return Cypher query string
+     */
     public String buildQuery(Set<Policy.PolicyRule> rules) {
         comparisonProperties = new HashMap<>();
         pathProperties = new ArrayList<>();
@@ -61,6 +63,11 @@ public class PolicyQueryGenerator {
         return query.append(String.format(" RETURN count(%s) > 0", rules.stream().toList().get(0).getType())).toString();
     }
 
+    /**
+     * Constructs a node for the policy's cypher query from a policy rule
+     * @param rule The policy rule
+     * @param query The cypher query
+     */
     private void buildNode(Policy.PolicyRule rule, StringBuilder query) {
         String node = rule.getType();
         var properties = rule.getProperties();
@@ -78,6 +85,12 @@ public class PolicyQueryGenerator {
         query.append("(").append(node).append(nodeProperties).append(")");
     }
 
+    /**
+     * Constructs the properties of nodes in the cypher query
+     * @param node The node
+     * @param properties Properties of the node
+     * @return The node's cypher query string representation with the properties attached
+     */
     private StringBuilder buildProperties(String node, Map<String, String> properties) {
         StringBuilder nodeProperties = new StringBuilder();
         if (properties != null && properties.size() > 0) {
@@ -104,6 +117,10 @@ public class PolicyQueryGenerator {
         return nodeProperties;
     }
 
+    /**
+     * Constructs the comparison conditions in the cypher query from the detected comparison properties
+     * @param query The cypher query with conditions attached
+     */
     private void buildConditions(StringBuilder query) {
         if (comparisonProperties.size() > 0) {
             query.append(" WHERE ");
@@ -119,6 +136,11 @@ public class PolicyQueryGenerator {
         }
     }
 
+    /**
+     * Constructs the path properties in the cypher query by replacing properties with the path prefix with their
+     * actual values
+     * @param query The cypher query
+     */
     private void buildPathProperties(StringBuilder query) {
         var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         for (String property : pathProperties) {
@@ -135,6 +157,11 @@ public class PolicyQueryGenerator {
         }
     }
 
+    /**
+     * Constructs the predefined spring context properties by replacing the properties with the context prefix with
+     * their actual values
+     * @param query The cypher query
+     */
     private void buildContextProperties(StringBuilder query) {
         var user = request.getUserPrincipal();
         for (String property : contextProperties) {

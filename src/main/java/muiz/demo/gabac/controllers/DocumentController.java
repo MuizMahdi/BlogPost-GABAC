@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,18 +25,13 @@ public class DocumentController {
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("@authorizationPolicies.isMemberOfAuthorizedDepartment()")
     public Document getDocument(@PathVariable Long id) {
-        Optional<Document> document = documentService.getDocumentById(id);
-        if (document.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Document");
-        }
-        return document.get();
+        return documentService.getDocumentById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@authorizationPolicies.isHeadOfDepartmentAtEvening()")
-    public ResponseEntity<?> deleteDocument(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
+    @PreAuthorize("@authorizationPolicies.isMemberOfAuthorizedDepartment()")
+    public Document getDocumentPreAuthorized(@PathVariable Long id) {
+        return documentService.getDocumentById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

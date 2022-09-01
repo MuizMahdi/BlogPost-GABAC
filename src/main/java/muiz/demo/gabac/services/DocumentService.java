@@ -16,6 +16,11 @@ public class DocumentService {
         this.documentRepository = documentRepository;
     }
 
+    /**
+     * Retrieves document by documentId
+     * @param documentId The document ID
+     * @return The document
+     */
     public Optional<Document> getDocumentById(Long documentId) {
         return documentRepository.findById(documentId);
     }

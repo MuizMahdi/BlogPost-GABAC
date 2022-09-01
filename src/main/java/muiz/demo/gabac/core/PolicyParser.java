@@ -2,8 +2,6 @@ package muiz.demo.gabac.core;
 
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
@@ -31,6 +29,10 @@ public class PolicyParser {
         }
     }
 
+    /**
+     * Constructs policies and their rules from the policies JSON.
+     * @return Parsed policies
+     */
     public List<Policy> getPolicies() {
         Gson gson = new Gson();
         List<Policy> policies = Arrays.asList(gson.fromJson(policiesJson, Policy[].class));
@@ -44,11 +46,23 @@ public class PolicyParser {
         return policies;
     }
 
+    /**
+     * Retrieves the access policies JSON
+     * @return Policies in JSON format
+     * @throws IOException
+     */
     private String getAccessPolicies() throws IOException {
         File policiesFile = ResourceUtils.getFile("classpath:data/access_policies.json");
         return new String(Files.readAllBytes(policiesFile.toPath()));
     }
 
+    /**
+     * Parses the JSON representation of the nested, tree structured policy rules in order to construct the relational
+     * part of the cypher query.
+     * @param map Rules tree
+     * @param rule The rule which will contain the parsed information
+     * @param policyRules List of rules that would contain all parsed policy rules
+     */
     private static void constructRules(LinkedTreeMap<?, ?> map, Policy.PolicyRule rule, LinkedHashSet<Policy.PolicyRule> policyRules) {
         var leftKey = map.keySet().stream().findFirst();
         var leftVal = map.values().stream().findFirst();

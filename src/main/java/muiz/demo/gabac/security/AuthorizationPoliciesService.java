@@ -18,14 +18,20 @@ public class AuthorizationPoliciesService {
 
     private final DocumentRepository documentRepository;
 
+    private final Map<String, String> pathVariables;
+
     @Autowired
     public AuthorizationPoliciesService(HttpServletRequest request, DocumentRepository documentRepository) {
         this.request = request;
         this.documentRepository = documentRepository;
+        this.pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
     }
 
+    /**
+     * Checks whether the current user is a member of an authorized department for a document
+     * @return Whether the document is published by the department in which the current user is a member of
+     */
     public boolean isMemberOfAuthorizedDepartment() {
-        var pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String currentUsername = request.getUserPrincipal().getName();
         Long requestedDocumentId = Long.parseLong(pathVariables.get("id"));
         return documentRepository.isPublishedByUserDepartment(requestedDocumentId, currentUsername);
